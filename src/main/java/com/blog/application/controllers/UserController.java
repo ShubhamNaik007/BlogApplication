@@ -8,6 +8,7 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -32,7 +33,7 @@ public class UserController {
 	private final Logger logger = LoggerFactory.getLogger(UserController.class);
 	
 	@PostMapping("/")
-	public ResponseEntity<UserDto> createUser(@RequestBody UserDto userDto){
+	public ResponseEntity<UserDto> createUser(@Validated @RequestBody UserDto userDto){
 		UserDto createdUser = this.userService.createUser(userDto);
 		return new ResponseEntity<>(createdUser,HttpStatus.CREATED);
 	}
@@ -51,7 +52,7 @@ public class UserController {
 	}
 	
 	@PutMapping("/{id}")
-	public ResponseEntity<UserDto> editUser(@RequestBody UserDto userDto,@PathVariable("id") Integer userId){
+	public ResponseEntity<UserDto> editUser(@Validated @RequestBody UserDto userDto,@PathVariable("id") Integer userId){
 		UserDto updatedUser = this.userService.updateUer(userDto, userId);
 		return new ResponseEntity<UserDto>(updatedUser,HttpStatus.OK);
 	}
