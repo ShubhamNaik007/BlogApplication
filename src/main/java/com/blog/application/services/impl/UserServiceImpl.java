@@ -30,7 +30,7 @@ public class UserServiceImpl implements UserService {
 	}
 
 	@Override
-	public UserDto updateUer(UserDto userData, Integer userId) {
+	public UserDto updateUser(UserDto userData, Integer userId) {
 		User getUserData = this.userRepo.findById(userId).orElseThrow(() -> new ResourceNotFoundException("User","id",userId));
 		
 		getUserData.setName(userData.getName());

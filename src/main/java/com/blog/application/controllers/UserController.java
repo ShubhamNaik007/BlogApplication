@@ -48,12 +48,12 @@ public class UserController {
 	public ResponseEntity<UserDto> getUser(@PathVariable Integer id){
 		UserDto user =  this.userService.getUserById(id);
 		
-		return new ResponseEntity<UserDto>(user,HttpStatus.FOUND);
+		return new ResponseEntity<UserDto>(user,HttpStatus.OK);
 	}
 	
 	@PutMapping("/{id}")
 	public ResponseEntity<UserDto> editUser(@Validated @RequestBody UserDto userDto,@PathVariable("id") Integer userId){
-		UserDto updatedUser = this.userService.updateUer(userDto, userId);
+		UserDto updatedUser = this.userService.updateUser(userDto, userId);
 		return new ResponseEntity<UserDto>(updatedUser,HttpStatus.OK);
 	}
 	
