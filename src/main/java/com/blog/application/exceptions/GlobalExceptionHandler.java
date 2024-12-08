@@ -31,7 +31,6 @@ public class GlobalExceptionHandler {
             String defaultMessage = error.getDefaultMessage();
             response.put(field,defaultMessage);
         });
-
         return new ResponseEntity<Map<String,String>>(response,HttpStatus.BAD_REQUEST);
     }
 }
