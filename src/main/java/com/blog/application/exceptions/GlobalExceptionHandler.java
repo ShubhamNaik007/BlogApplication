@@ -1,7 +1,6 @@
 package com.blog.application.exceptions;
 
-import com.blog.application.payloads.ApiResponse;
-import com.blog.application.payloads.UserDto;
+import com.blog.application.payloads.responses.ApiResponse;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.validation.FieldError;
@@ -9,7 +8,6 @@ import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
 
-import java.time.LocalDate;
 import java.util.HashMap;
 import java.util.Map;
 

@@ -3,8 +3,17 @@ package com.blog.application.services.impl;
 import java.util.List;
 import java.util.stream.Collectors;
 
+import com.blog.application.entities.Post;
+import com.blog.application.payloads.PostDto;
+import com.blog.application.payloads.responses.PostResponse;
+import com.blog.application.payloads.responses.UserResponse;
 import org.modelmapper.ModelMapper;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
 import com.blog.application.entities.User;
@@ -15,6 +24,8 @@ import com.blog.application.exceptions.ResourceNotFoundException;
 
 @Service
 public class UserServiceImpl implements UserService {
+
+	private final Logger logger = LoggerFactory.getLogger(UserServiceImpl.class);
 
 	@Autowired
 	private UserRepo userRepo;
@@ -45,10 +56,13 @@ public class UserServiceImpl implements UserService {
 
 	
 	@Override
-	public List<UserDto> getAllUsers() {
-		List<User> users = this.userRepo.findAll();
-		List<UserDto> usersData = users.stream().map(user->userToDto(user)).collect(Collectors.toList());
-		return usersData;
+	public UserResponse getAllUsers(Integer pageNumber,Integer pageSize) {
+		Pageable obj = PageRequest.of(pageNumber,pageSize);
+		Page<User> userData =  this.userRepo.findAll(obj);
+		List<User> users = userData.getContent();
+		List<UserDto> usersData = users.stream().map(this::userToDto).collect(Collectors.toList());
+
+		return userToUserResponse(userData,usersData);
 	}
 
 	@Override
@@ -63,6 +77,16 @@ public class UserServiceImpl implements UserService {
 		this.userRepo.deleteById(userId);
 	}
 
+	public UserResponse userToUserResponse(Page<User> pagePost, List<UserDto> userDto){
+		UserResponse response = new UserResponse();
+		response.setContent(userDto);
+		response.setPageNumber(pagePost.getNumber());
+		response.setPageSize(pagePost.getSize());
+		response.setTotalElements(pagePost.getTotalElements());
+		response.setTotalPages(pagePost.getTotalPages());
+		response.setLastPage(pagePost.isLast());
+		return response;
+	}
 
 	private User dtoToUser(UserDto userDto) {
 //		User user = new User();
