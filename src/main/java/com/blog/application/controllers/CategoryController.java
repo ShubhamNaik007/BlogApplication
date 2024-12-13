@@ -1,15 +1,14 @@
 package com.blog.application.controllers;
 
-import com.blog.application.payloads.ApiResponse;
+import com.blog.application.payloads.responses.ApiResponse;
 import com.blog.application.payloads.CategoryDto;
+import com.blog.application.payloads.responses.CategoryResponse;
 import com.blog.application.services.CategoryService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
-
-import java.util.List;
 
 @RestController
 @RequestMapping("/api/categories")
@@ -38,8 +37,11 @@ public class CategoryController {
     }
 
     @GetMapping("/")
-    public ResponseEntity<List<CategoryDto>> listOfCategories(){
-        List<CategoryDto> allCategories = this.categoryService.getAllCategory();
+    public ResponseEntity<CategoryResponse> listOfCategories(
+            @RequestParam(value = "pageNumber",defaultValue = "0",required = false) Integer pageNumber,
+            @RequestParam(value = "pageSize",defaultValue = "3",required = false) Integer pageSize
+    ){
+        CategoryResponse allCategories = this.categoryService.getAllCategory(pageNumber,pageSize);
         return new ResponseEntity<>(allCategories,HttpStatus.OK);
     }
 

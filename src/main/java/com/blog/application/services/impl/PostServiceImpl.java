@@ -4,7 +4,10 @@ import com.blog.application.entities.Category;
 import com.blog.application.entities.Post;
 import com.blog.application.entities.User;
 import com.blog.application.exceptions.ResourceNotFoundException;
+import com.blog.application.payloads.CategoryDto;
 import com.blog.application.payloads.PostDto;
+import com.blog.application.payloads.responses.CategoryResponse;
+import com.blog.application.payloads.responses.PostResponse;
 import com.blog.application.repositories.CategoryRepo;
 import com.blog.application.repositories.PostRepo;
 import com.blog.application.repositories.UserRepo;
@@ -13,13 +16,13 @@ import org.modelmapper.ModelMapper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
-import org.springframework.ui.ModelMap;
 
 import java.time.LocalDate;
 import java.util.List;
-import java.util.Optional;
-import java.util.stream.Collectors;
 
 @Service
 public class PostServiceImpl implements PostService {
@@ -55,12 +58,11 @@ public class PostServiceImpl implements PostService {
     @Override
     public PostDto updatePost(PostDto postDto, Integer postId) {
         Post post = this.postRepo.findById(postId).orElseThrow(() -> new ResourceNotFoundException("Post", "postId", postId));
-        PostDto postData = this.modelMapper.map(post,PostDto.class);
-        postData.setTitle(postDto.getTitle());
-        postData.setContent(postDto.getContent());
-        postData.setImageName(postDto.getImageName());
+        post.setTitle(postDto.getTitle());
+        post.setContent(postDto.getContent());
+        post.setImageName(postDto.getImageName());
         this.postRepo.save(post);
-        return this.modelMapper.map(postData,PostDto.class);
+        return this.modelMapper.map(post,PostDto.class);
     }
 
     @Override
@@ -70,10 +72,14 @@ public class PostServiceImpl implements PostService {
     }
 
     @Override
-    public List<PostDto> getAllPost() {
-        List<Post> postsData = this.postRepo.findAll();
-        List<PostDto> allPosts = postsData.stream().map((post)->this.modelMapper.map(post,PostDto.class)).toList();
-        return allPosts;
+    public PostResponse getAllPost(Integer pageNumber, Integer pageSize) {
+        Pageable obj = PageRequest.of(pageNumber,pageSize);
+
+        Page<Post> pagePost = this.postRepo.findAll(obj);
+        List<Post> postsData = pagePost.getContent();
+        List<PostDto> postDto = postsData.stream().map((post)-> this.modelMapper.map(post,PostDto.class)).toList();
+
+        return postToPostResponse(pagePost,postDto);
     }
 
     @Override
@@ -99,5 +105,16 @@ public class PostServiceImpl implements PostService {
     @Override
     public List<PostDto> getPostsBySearch(String keyword) {
         return List.of();
+    }
+
+    public PostResponse postToPostResponse(Page<Post> pagePost, List<PostDto> postDto){
+        PostResponse response = new PostResponse();
+        response.setContent(postDto);
+        response.setPageNumber(pagePost.getNumber());
+        response.setPageSize(pagePost.getSize());
+        response.setTotalElements(pagePost.getTotalElements());
+        response.setTotalPages(pagePost.getTotalPages());
+        response.setLastPage(pagePost.isLast());
+        return response;
     }
 }

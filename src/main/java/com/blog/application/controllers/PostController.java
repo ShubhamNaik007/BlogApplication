@@ -1,15 +1,14 @@
 package com.blog.application.controllers;
 
-import com.blog.application.entities.Post;
-import com.blog.application.payloads.ApiResponse;
+import com.blog.application.payloads.responses.ApiResponse;
 import com.blog.application.payloads.PostDto;
+import com.blog.application.payloads.responses.PostResponse;
 import com.blog.application.services.PostService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
-import java.time.LocalDate;
 import java.util.List;
 
 @RestController
@@ -30,15 +29,18 @@ public class PostController {
     }
 
     @GetMapping("/posts")
-    public ResponseEntity<List<PostDto>> getAllPosts(){
-        List<PostDto> allPost = this.postService.getAllPost();
-        return new ResponseEntity<>(allPost,HttpStatus.OK);
+    public ResponseEntity<PostResponse> getAllPosts(
+            @RequestParam(value = "pageNumber",defaultValue = "1",required = false) Integer pageNumber,
+            @RequestParam(value = "pageSize",defaultValue = "5",required = false) Integer pageSize
+    ){
+        PostResponse allPost = this.postService.getAllPost(pageNumber,pageSize);
+        return new ResponseEntity<PostResponse>(allPost,HttpStatus.OK);
     }
 
     @DeleteMapping("/posts/{postId}")
     public ResponseEntity<ApiResponse> deletePost(@PathVariable Integer postId){
         this.postService.deletePost(postId);
-        return new ResponseEntity<>(new ApiResponse("Post delete successfully...!",true),HttpStatus.OK);
+        return new ResponseEntity<>(new ApiResponse("Post delete successfully...!",false),HttpStatus.OK);
     }
 
     @GetMapping("/posts/{postId}")

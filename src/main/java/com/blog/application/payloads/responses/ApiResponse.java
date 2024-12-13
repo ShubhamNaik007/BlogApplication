@@ -1,4 +1,4 @@
-package com.blog.application.payloads;
+package com.blog.application.payloads.responses;
 
 import lombok.Data;
 

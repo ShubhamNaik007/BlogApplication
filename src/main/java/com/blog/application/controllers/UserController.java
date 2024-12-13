@@ -1,25 +1,15 @@
 package com.blog.application.controllers;
 
-import java.util.List;
-import java.util.Map;
-
+import com.blog.application.payloads.responses.UserResponse;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.validation.annotation.Validated;
-import org.springframework.web.bind.annotation.DeleteMapping;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.PutMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
-import com.blog.application.entities.User;
-import com.blog.application.payloads.ApiResponse;
+import com.blog.application.payloads.responses.ApiResponse;
 import com.blog.application.payloads.UserDto;
 import com.blog.application.services.UserService;
 
@@ -39,9 +29,12 @@ public class UserController {
 	}
 	
 	@GetMapping("/")
-	public ResponseEntity<List<UserDto>> getUsers(){
-		List<UserDto> users = this.userService.getAllUsers();
-		return new ResponseEntity<List<UserDto>>(users,HttpStatus.OK);
+	public ResponseEntity<UserResponse> getUsers(
+			@RequestParam(value = "pageNumber",defaultValue = "1",required = false) Integer pageNumber,
+			@RequestParam(value = "pageSize",defaultValue = "3",required = false) Integer pageSize
+	){
+		UserResponse users = this.userService.getAllUsers(pageNumber,pageSize);
+		return new ResponseEntity<>(users,HttpStatus.OK);
 	}
 	
 	@GetMapping("/{id}")
