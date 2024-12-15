@@ -1,5 +1,6 @@
 package com.blog.application.controllers;
 
+import com.blog.application.config.AppConstants;
 import com.blog.application.payloads.responses.ApiResponse;
 import com.blog.application.payloads.PostDto;
 import com.blog.application.payloads.responses.PostResponse;
@@ -30,10 +31,12 @@ public class PostController {
 
     @GetMapping("/posts")
     public ResponseEntity<PostResponse> getAllPosts(
-            @RequestParam(value = "pageNumber",defaultValue = "1",required = false) Integer pageNumber,
-            @RequestParam(value = "pageSize",defaultValue = "5",required = false) Integer pageSize
+            @RequestParam(value = "pageNumber",defaultValue = AppConstants.PAGE_NUMBER,required = false) Integer pageNumber,
+            @RequestParam(value = "pageSize",defaultValue = AppConstants.PAGE_SIZE,required = false) Integer pageSize,
+            @RequestParam(value = "sortBy",defaultValue = AppConstants.SORT_BY,required = false) String sortBy,
+            @RequestParam(value = "sortDir",defaultValue = AppConstants.SORT_DIR,required = false) String sortDir
     ){
-        PostResponse allPost = this.postService.getAllPost(pageNumber,pageSize);
+        PostResponse allPost = this.postService.getAllPost(pageNumber,pageSize,sortBy,sortDir);
         return new ResponseEntity<PostResponse>(allPost,HttpStatus.OK);
     }
 
@@ -65,5 +68,21 @@ public class PostController {
     public ResponseEntity<PostDto> updatePostData(@RequestBody PostDto postData,@PathVariable Integer postId){
         PostDto updatedPost = this.postService.updatePost(postData,postId);
         return new ResponseEntity<>(updatedPost,HttpStatus.OK);
+    }
+
+    @GetMapping("/posts/search/title/{keywords}")
+    public ResponseEntity<List<PostDto>> searchPostByTitle(
+            @PathVariable("keywords") String keywords
+    ){
+        List<PostDto> response = this.postService.getPostsByTitle(keywords);
+        return new ResponseEntity<>(response,HttpStatus.OK);
+    }
+
+    @GetMapping("/posts/search/content/{keywords}")
+    public ResponseEntity<List<PostDto>> searchPostByContent(
+            @PathVariable("keywords") String keywords
+    ){
+        List<PostDto> response = this.postService.getPostsByContent("%"+keywords+"%");
+        return new ResponseEntity<>(response,HttpStatus.OK);
     }
 }
