@@ -19,6 +19,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDate;
@@ -72,9 +73,12 @@ public class PostServiceImpl implements PostService {
     }
 
     @Override
-    public PostResponse getAllPost(Integer pageNumber, Integer pageSize) {
-        Pageable obj = PageRequest.of(pageNumber,pageSize);
+    public PostResponse getAllPost(Integer pageNumber, Integer pageSize,String sortBy,String sortDir) {
+        Sort sort = sortDir.equalsIgnoreCase("desc")
+                ? Sort.by(sortBy).descending()
+                : Sort.by(sortBy).ascending();;
 
+        Pageable obj = PageRequest.of(pageNumber,pageSize, sort);
         Page<Post> pagePost = this.postRepo.findAll(obj);
         List<Post> postsData = pagePost.getContent();
         List<PostDto> postDto = postsData.stream().map((post)-> this.modelMapper.map(post,PostDto.class)).toList();
@@ -103,8 +107,21 @@ public class PostServiceImpl implements PostService {
     }
 
     @Override
-    public List<PostDto> getPostsBySearch(String keyword) {
-        return List.of();
+    public List<PostDto> getPostsByTitle(String keyword) {
+        List<Post> posts = this.postRepo.findByTitleContaining(keyword);
+        List<PostDto> postsData = posts.stream()
+                .map(post->this.modelMapper.map(post,PostDto.class))
+                .toList();
+        return postsData;
+    }
+
+    @Override
+    public List<PostDto> getPostsByContent(String keyword) {
+        List<Post> posts = this.postRepo.findByContentContaining(keyword);
+        List<PostDto> postsData = posts.stream()
+                .map(post->this.modelMapper.map(post,PostDto.class))
+                .toList();
+        return postsData;
     }
 
     public PostResponse postToPostResponse(Page<Post> pagePost, List<PostDto> postDto){
