@@ -3,9 +3,6 @@ package com.blog.application.services.impl;
 import java.util.List;
 import java.util.stream.Collectors;
 
-import com.blog.application.entities.Post;
-import com.blog.application.payloads.PostDto;
-import com.blog.application.payloads.responses.PostResponse;
 import com.blog.application.payloads.responses.UserResponse;
 import org.modelmapper.ModelMapper;
 import org.slf4j.Logger;
