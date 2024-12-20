@@ -5,12 +5,15 @@ import jakarta.persistence.*;
 import lombok.*;
 
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 
 
 @NoArgsConstructor
 @AllArgsConstructor
-@Data
+@Getter
+@Setter
 @Table(name="users")
 @Entity
 public class User {
@@ -25,4 +28,8 @@ public class User {
 	@OneToMany(mappedBy = "user",cascade = CascadeType.ALL,fetch = FetchType.LAZY)
 	@JsonManagedReference
 	private List<Post> posts = new ArrayList<>();
+
+	@OneToMany(mappedBy = "user",cascade = CascadeType.ALL,fetch = FetchType.LAZY)
+	@JsonManagedReference
+	private Set<Comment> comments = new HashSet<>();
 }

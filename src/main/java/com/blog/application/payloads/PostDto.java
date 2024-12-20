@@ -1,16 +1,12 @@
 package com.blog.application.payloads;
 
-import com.blog.application.entities.Category;
-import com.blog.application.entities.User;
-import jakarta.persistence.JoinColumn;
-import jakarta.persistence.ManyToOne;
-import lombok.AllArgsConstructor;
-import lombok.Data;
-import lombok.NoArgsConstructor;
-
+import lombok.*;
 import java.time.LocalDate;
+import java.util.HashSet;
+import java.util.Set;
 
-@Data
+@Getter
+@Setter
 @AllArgsConstructor
 @NoArgsConstructor
 public class PostDto {
@@ -21,4 +17,5 @@ public class PostDto {
     private LocalDate addedDate;
     private CategoryDto category;
     private UserDto user;
+    private Set<CommentDto> comments = new HashSet<>();
 }

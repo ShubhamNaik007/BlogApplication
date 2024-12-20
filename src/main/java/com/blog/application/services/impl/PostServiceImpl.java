@@ -4,11 +4,10 @@ import com.blog.application.entities.Category;
 import com.blog.application.entities.Post;
 import com.blog.application.entities.User;
 import com.blog.application.exceptions.ResourceNotFoundException;
-import com.blog.application.payloads.CategoryDto;
 import com.blog.application.payloads.PostDto;
-import com.blog.application.payloads.responses.CategoryResponse;
 import com.blog.application.payloads.responses.PostResponse;
 import com.blog.application.repositories.CategoryRepo;
+import com.blog.application.repositories.CommentRepo;
 import com.blog.application.repositories.PostRepo;
 import com.blog.application.repositories.UserRepo;
 import com.blog.application.services.PostService;
@@ -23,7 +22,7 @@ import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDate;
-import java.util.List;
+import java.util.*;
 
 @Service
 public class PostServiceImpl implements PostService {
@@ -41,6 +40,9 @@ public class PostServiceImpl implements PostService {
 
     @Autowired
     private CategoryRepo categoryRepo;
+
+    @Autowired
+    private CommentRepo commentRepo;
 
     @Override
     public PostDto createPost(PostDto postDto, Integer userId, Integer categoryId) {
@@ -82,7 +84,6 @@ public class PostServiceImpl implements PostService {
         Page<Post> pagePost = this.postRepo.findAll(obj);
         List<Post> postsData = pagePost.getContent();
         List<PostDto> postDto = postsData.stream().map((post)-> this.modelMapper.map(post,PostDto.class)).toList();
-
         return postToPostResponse(pagePost,postDto);
     }
 
@@ -118,10 +119,9 @@ public class PostServiceImpl implements PostService {
     @Override
     public List<PostDto> getPostsByContent(String keyword) {
         List<Post> posts = this.postRepo.findByContentContaining(keyword);
-        List<PostDto> postsData = posts.stream()
-                .map(post->this.modelMapper.map(post,PostDto.class))
+        return posts.stream()
+                .map(post-> this.modelMapper.map(post,PostDto.class))
                 .toList();
-        return postsData;
     }
 
     public PostResponse postToPostResponse(Page<Post> pagePost, List<PostDto> postDto){

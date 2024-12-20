@@ -1,7 +1,6 @@
 package com.blog.application.payloads.responses;
 
 import com.blog.application.payloads.CategoryDto;
-import com.blog.application.payloads.PostDto;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;

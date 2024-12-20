@@ -4,8 +4,6 @@ import com.blog.application.entities.Category;
 import com.blog.application.exceptions.ResourceNotFoundException;
 import com.blog.application.payloads.CategoryDto;
 import com.blog.application.payloads.responses.CategoryResponse;
-import com.blog.application.payloads.responses.PostResponse;
-import com.blog.application.payloads.responses.UserResponse;
 import com.blog.application.repositories.CategoryRepo;
 import com.blog.application.services.CategoryService;
 import org.modelmapper.ModelMapper;
