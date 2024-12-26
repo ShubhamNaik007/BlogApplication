@@ -1,6 +1,6 @@
 package com.blog.application.controllers;
 
-import com.blog.application.config.AppConstants;
+import com.blog.application.utils.AppConstants;
 import com.blog.application.payloads.responses.ApiResponse;
 import com.blog.application.payloads.PostDto;
 import com.blog.application.payloads.responses.PostResponse;
