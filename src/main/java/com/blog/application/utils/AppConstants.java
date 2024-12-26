@@ -1,4 +1,4 @@
-package com.blog.application.config;
+package com.blog.application.utils;
 
 public class AppConstants {
     public static final String PAGE_NUMBER= "0";
