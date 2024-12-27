@@ -34,17 +34,10 @@ public class GlobalExceptionHandler {
         return new ResponseEntity<Map<String,String>>(response,HttpStatus.BAD_REQUEST);
     }
 
-    @ExceptionHandler(BadCredentialsException.class)
-    private ResponseEntity<ApiResponse> handleBadCredentialsException(){
-        String message = "Invalid username and password";
-        ApiResponse apiResponse = new ApiResponse(message,false);
-        return new ResponseEntity<ApiResponse>(apiResponse,HttpStatus.UNAUTHORIZED);
-    }
-
-    @ExceptionHandler(Exception.class)
-    public ResponseEntity<ApiResponse> handleGenericException(Exception ex) {
-        String message = "An unexpected error occurred: " + ex.getMessage();
-        ApiResponse apiResponse = new ApiResponse(message, false);
-        return new ResponseEntity<>(apiResponse, HttpStatus.INTERNAL_SERVER_ERROR);
+    @ExceptionHandler(ApiException.class)
+    public ResponseEntity<ApiResponse> handleApiException(ApiException ex){
+        String message = ex.getMessage();
+        ApiResponse apiResponse = new ApiResponse(message,true);
+        return new ResponseEntity<ApiResponse>(apiResponse,HttpStatus.BAD_REQUEST);
     }
 }

@@ -1,5 +1,6 @@
 package com.blog.application.security;
 
+import com.blog.application.exceptions.ApiException;
 import io.jsonwebtoken.ExpiredJwtException;
 import io.jsonwebtoken.MalformedJwtException;
 import jakarta.servlet.FilterChain;
@@ -34,23 +35,13 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
         String token = null;
 
         try {
-            // Check if the token is present and starts with "Bearer"
             if (requestToken != null && requestToken.startsWith("Bearer ")) {
                 token = requestToken.substring(7);
                 username = jwtTokenHelper.getUsernameFromToken(token);
             } else if (requestToken != null) {
-                throw new MalformedJwtException("JWT does not start with 'Bearer '");
+                throw new ApiException("JWT does not start with 'Bearer '");
             }
-        } catch (IllegalArgumentException e) {
-            throw new ServletException("Unable to get JWT token", e);
-        } catch (ExpiredJwtException e) {
-            throw new ServletException("JWT token has expired", e);
-        } catch (MalformedJwtException e) {
-            throw new ServletException("Invalid JWT token", e);
-        }
 
-        // Once we have the token, validate it
-        try {
             if (username != null && SecurityContextHolder.getContext().getAuthentication() == null) {
                 UserDetails userDetails = userDetailsService.loadUserByUsername(username);
 
@@ -62,14 +53,29 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
                     // Set the authentication in the SecurityContext
                     SecurityContextHolder.getContext().setAuthentication(authenticationToken);
                 } else {
-                    throw new ServletException("Invalid JWT token during validation");
+                    throw new ApiException("Invalid JWT token during validation");
                 }
             }
-        } catch (Exception e) {
-            throw new ServletException("Authentication failed for token: " + token, e);
-        }
+            filterChain.doFilter(request, response);
 
-        // Continue with the filter chain
-        filterChain.doFilter(request, response);
+        } catch (ExpiredJwtException e) {
+            handleException(response, "JWT token has expired", HttpServletResponse.SC_UNAUTHORIZED);
+        } catch (MalformedJwtException e) {
+            handleException(response, "Invalid JWT token", HttpServletResponse.SC_BAD_REQUEST);
+        } catch (IllegalArgumentException e) {
+            handleException(response, "Unable to get JWT token", HttpServletResponse.SC_BAD_REQUEST);
+        } catch (ApiException e) {
+            handleException(response, e.getMessage(), HttpServletResponse.SC_BAD_REQUEST);
+        } catch (Exception e) {
+            handleException(response, "An unexpected error occurred", HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
+        }
+    }
+
+    private void handleException(HttpServletResponse response, String message, int status) throws IOException {
+        response.setStatus(status);
+        response.setContentType("application/json");
+        response.getWriter().write(
+                String.format("{\"error\": \"%s\", \"status\": %d}", message, status)
+        );
     }
 }
