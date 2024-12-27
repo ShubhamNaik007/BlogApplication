@@ -6,6 +6,7 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
@@ -27,7 +28,8 @@ public class UserController {
 		UserDto createdUser = this.userService.createUser(userDto);
 		return new ResponseEntity<>(createdUser,HttpStatus.CREATED);
 	}
-	
+
+	@PreAuthorize("hasRole('ADMIN')")
 	@GetMapping("/")
 	public ResponseEntity<UserResponse> getUsers(
 			@RequestParam(value = "pageNumber",defaultValue = "1",required = false) Integer pageNumber,
@@ -49,7 +51,8 @@ public class UserController {
 		UserDto updatedUser = this.userService.updateUser(userDto, userId);
 		return new ResponseEntity<UserDto>(updatedUser,HttpStatus.OK);
 	}
-	
+
+	@PreAuthorize("hasRole('ADMIN')")
 	@DeleteMapping("/{id}")
 	public ResponseEntity<ApiResponse> removeUser(@PathVariable Integer id){
 		this.userService.deleteUser(id);

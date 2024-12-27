@@ -1,5 +1,6 @@
 package com.blog.application.controllers;
 
+import com.blog.application.exceptions.ApiException;
 import com.blog.application.payloads.JwtAuthRequest;
 import com.blog.application.payloads.responses.ApiResponse;
 import com.blog.application.payloads.responses.JwtAuthResponse;
@@ -46,7 +47,7 @@ public class AuthController {
         try {
             this.authenticationManager.authenticate(authenticationToken);
         } catch (BadCredentialsException e) {
-            throw new BadCredentialsException("Invalid username or password. Please check !!!");
+            throw new ApiException("Invalid username or password. Please check !!!");
         }
     }
 }
