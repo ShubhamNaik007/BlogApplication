@@ -5,6 +5,9 @@ import jakarta.validation.constraints.NotEmpty;
 import jakarta.validation.constraints.Size;
 import lombok.*;
 
+import java.util.HashSet;
+import java.util.Set;
+
 @AllArgsConstructor
 @NoArgsConstructor
 @Getter
@@ -21,4 +24,6 @@ public class UserDto {
 	private String password;
 	@NotEmpty
 	private String about;
+
+	private Set<RoleDto> roles = new HashSet<>();
 }

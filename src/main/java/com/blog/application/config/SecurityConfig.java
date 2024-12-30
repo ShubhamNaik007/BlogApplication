@@ -41,9 +41,8 @@ public class SecurityConfig {
     public SecurityFilterChain securityFilterChain(HttpSecurity httpSecurity) throws Exception {
         return httpSecurity.csrf(httpSecurityCsrfConfigurer -> httpSecurityCsrfConfigurer.disable()) // CSRF Protection: Disabled.
                 .authorizeHttpRequests(registry -> {
-                    registry.requestMatchers("/api/v1/auth/login").permitAll();
-                    registry.requestMatchers("/api/users").authenticated(); // Require authentication for API routes.
-                    registry.anyRequest().permitAll(); // Other routes are accessible to everyone.
+                    registry.requestMatchers("/api/v1/auth/**").permitAll();
+                    registry.anyRequest().authenticated(); // Other routes are accessible to everyone.
                 })
                 .sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS)) // Stateless sessions
                 .exceptionHandling(exception ->
